@@ -192,7 +192,12 @@ export class GameModel {
     
     if (player && weapon && player.money >= weapon.price) {
       player.money -= weapon.price;
-      player.weapons.push({ ...weapon });
+      // Create a unique weapon instance with a unique ID
+      const weaponInstance = {
+        ...weapon,
+        id: `${weapon.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      };
+      player.weapons.push(weaponInstance);
       return true;
     }
     return false;
