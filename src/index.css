@@ -8,35 +8,59 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Tactical Dark Theme */
+    --background: 220 15% 8%;
+    --foreground: 210 15% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 15% 10%;
+    --card-foreground: 210 15% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 15% 12%;
+    --popover-foreground: 210 15% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Tactical Orange Primary */
+    --primary: 25 95% 55%;
+    --primary-foreground: 220 15% 8%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Tactical Blue Secondary */
+    --secondary: 215 80% 45%;
+    --secondary-foreground: 210 15% 95%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 210 10% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 25 95% 55%;
+    --accent-foreground: 220 15% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Terrorist Red */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 210 15% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Counter-Terrorist Blue */
+    --ct-blue: 215 80% 45%;
+    --ct-blue-foreground: 210 15% 95%;
 
-    --radius: 0.5rem;
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 25 95% 55%;
+
+    --radius: 0.75rem;
+
+    /* Gaming Specific Colors */
+    --health: 120 60% 50%;
+    --armor: 200 80% 60%;
+    --warning: 45 95% 60%;
+    --critical: 0 85% 60%;
+    
+    /* Gradients */
+    --gradient-tactical: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-dark: linear-gradient(180deg, hsl(var(--background)), hsl(220 15% 5%));
+    --gradient-glow: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+    
+    /* Shadows */
+    --shadow-tactical: 0 10px 30px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.2);
+    --shadow-card: 0 8px 32px -8px hsl(220 15% 5% / 0.6);
 
     --sidebar-background: 0 0% 98%;
 

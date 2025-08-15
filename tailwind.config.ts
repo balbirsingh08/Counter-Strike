@@ -52,6 +52,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				'ct-blue': {
+					DEFAULT: 'hsl(var(--ct-blue))',
+					foreground: 'hsl(var(--ct-blue-foreground))'
+				},
+				health: 'hsl(var(--health))',
+				armor: 'hsl(var(--armor))',
+				warning: 'hsl(var(--warning))',
+				critical: 'hsl(var(--critical))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
