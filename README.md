@@ -1,4 +1,4 @@
-# Welcome to counter strick project
+# Welcome to  Counter-Strike  project
 
 ## Project info
 
@@ -71,3 +71,17 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+
+
+
+Counter-Strike in MVP (Model–View–Presenter) Terms
+
+In Counter-Strike, the Model represents the core game data and rules, primarily maintained on the server. This includes player stats (health, armor, position, inventory), weapon properties (damage, recoil, reload time), map details (spawn points, bomb sites), physics, and win conditions. The Model enforces all game logic — such as hit detection, round progression, and money rewards — ensuring fairness and preventing cheating through server authority.
+
+The View is the client’s rendering and audio system, responsible solely for presenting the game state to the player. It draws 3D environments, player models, weapon animations, particle effects, and displays HUD elements like health bars, ammo counters, radar, and round timers. It also handles audio cues such as gunfire, footsteps, and voice chat, but has no decision-making logic.
+
+The Presenter sits between the Model and View, managing player inputs, game state updates, and communication with the server. It processes actions like shooting or moving, validates them locally, sends requests to the Model, and receives authoritative updates. It also implements client-side prediction and reconciliation to hide network latency, ensuring smooth gameplay. Finally, it decides what visual and audio updates the View should display based on the latest game state.
+
+This separation ensures that Counter-Strike maintains responsive, fair, and visually engaging gameplay. The Model secures the rules, the View focuses on immersive presentation, and the Presenter coordinates the two for a seamless player experience.
+
