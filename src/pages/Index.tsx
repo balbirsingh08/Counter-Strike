@@ -6,6 +6,7 @@ import { ReactGameView } from "../views/GameView";
 import { GameHUD } from "../components/GameHUD";
 import { WeaponSelection } from "../components/WeaponSelection";
 import { PlayerJoin } from "../components/PlayerJoin";
+import Game3D from "../components/Game3D";
 
 const Index = () => {
   const [gameModel] = useState(() => new GameModel());
@@ -14,6 +15,7 @@ const Index = () => {
   const [showWeaponSelection, setShowWeaponSelection] = useState(false);
   const [showPlayerJoin, setShowPlayerJoin] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameMode, setGameMode] = useState<'menu' | '3d'>('menu');
 
   // Use the game view hook to connect React state
   const gameViewData = gameView.useGameView();
@@ -40,10 +42,19 @@ const Index = () => {
     gamePresenter.handleRoundStart();
   };
 
-  const handleDamageTest = () => {
+  const handleStart3DGame = () => {
+    setGameMode('3d');
+  };
+
+  const handleBotKill = () => {
     const currentPlayer = gamePresenter.getCurrentPlayer();
     if (currentPlayer) {
-      gamePresenter.handleDamage(currentPlayer.id, 25);
+      // Add kill to player stats
+      gamePresenter.getCurrentGameState().players.forEach(p => {
+        if (p.id === currentPlayer.id) {
+          p.kills += 1;
+        }
+      });
     }
   };
 
@@ -53,6 +64,18 @@ const Index = () => {
   
   console.log('Current player:', currentPlayer);
   console.log('Game started:', gameStarted);
+
+  // Show 3D game if in 3D mode
+  if (gameMode === '3d' && currentPlayer) {
+    return (
+      <Game3D
+        playerName={currentPlayer.name}
+        playerTeam={currentPlayer.team}
+        playerHealth={currentPlayer.health}
+        onBotKill={handleBotKill}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
@@ -97,6 +120,17 @@ const Index = () => {
               </p>
             </div>
 
+            {/* Game Mode Selection */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button
+                onClick={handleStart3DGame}
+                size="lg"
+                className="px-12 py-6 text-xl font-bold bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white"
+              >
+                🎮 Start 3D Game
+              </Button>
+            </div>
+
             {/* Game Controls */}
             <div className="flex flex-wrap justify-center gap-4">
               <Button
@@ -115,15 +149,6 @@ const Index = () => {
                 className="px-8"
               >
                 Start Round
-              </Button>
-              
-              <Button
-                onClick={handleDamageTest}
-                variant="outline"
-                size="lg"
-                className="px-8"
-              >
-                Take Damage (Test)
               </Button>
             </div>
 
