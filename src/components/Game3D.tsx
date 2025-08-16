@@ -59,112 +59,213 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
   const [isMoving, setIsMoving] = useState(true);
   const [health, setHealth] = useState(100);
   const [lastShot, setLastShot] = useState(0);
+  const [isHit, setIsHit] = useState(false);
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
     const time = state.clock.elapsedTime;
     
-    // Simple AI movement
-    if (isMoving) {
-      const newX = botPos[0] + Math.sin(time * 0.5) * 0.01;
-      const newZ = botPos[2] + Math.cos(time * 0.3) * 0.01;
-      setBotPos([newX, botPos[1], newZ]);
-      meshRef.current.position.set(newX, botPos[1], newZ);
+    // Simple AI movement - patrol pattern
+    if (isMoving && health > 0) {
+      const newX = position[0] + Math.sin(time * 0.3) * 2;
+      const newZ = position[2] + Math.cos(time * 0.2) * 1.5;
+      setBotPos([newX, position[1], newZ]);
+      meshRef.current.position.set(newX, position[1], newZ);
     }
 
     // Look at player
     const playerVec = new Vector3(...playerPosition);
-    meshRef.current.lookAt(playerVec);
+    if (health > 0) {
+      meshRef.current.lookAt(playerVec);
+    }
 
     // Shoot at player occasionally
-    if (time - lastShot > 3) {
+    if (time - lastShot > 4 && health > 0) {
       setLastShot(time);
-      // Visual muzzle flash effect could go here
-      console.log('Bot shooting!');
+      console.log('Bot shooting at player!');
+    }
+
+    // Reset hit animation
+    if (isHit) {
+      setTimeout(() => setIsHit(false), 200);
     }
   });
 
-  const handleClick = () => {
+  const handleClick = (event: any) => {
+    event.stopPropagation();
+    if (health <= 0) return;
+    
+    setIsHit(true);
     setHealth(prev => {
       const newHealth = Math.max(0, prev - 25);
       if (newHealth === 0) {
         setIsMoving(false);
         onHit();
+        console.log('Bot eliminated!');
       }
       return newHealth;
     });
   };
 
+  const isDead = health <= 0;
+
   return (
     <group>
+      {/* Bot Body - Improved visuals */}
       <mesh ref={meshRef} position={botPos} onClick={handleClick}>
-        {/* Bot Body */}
-        <boxGeometry args={[0.5, 1.5, 0.3]} />
-        <meshPhongMaterial color={health > 0 ? "#ff4444" : "#666666"} />
+        {/* Torso */}
+        <boxGeometry args={[0.6, 1.2, 0.3]} />
+        <meshPhongMaterial 
+          color={isDead ? "#444444" : isHit ? "#ff0000" : "#cc3333"} 
+          transparent={isDead}
+          opacity={isDead ? 0.5 : 1}
+        />
       </mesh>
+      
       {/* Bot Head */}
-      <Sphere args={[0.3]} position={[botPos[0], botPos[1] + 1.05, botPos[2]]}>
-        <meshPhongMaterial color={health > 0 ? "#ff4444" : "#666666"} />
-      </Sphere>
-      {/* Bot Name */}
+      <mesh position={[botPos[0], botPos[1] + 1.4, botPos[2]]} onClick={handleClick}>
+        <sphereGeometry args={[0.25]} />
+        <meshPhongMaterial 
+          color={isDead ? "#333333" : isHit ? "#ff4444" : "#bb2222"} 
+          transparent={isDead}
+          opacity={isDead ? 0.5 : 1}
+        />
+      </mesh>
+
+      {/* Arms */}
+      <mesh position={[botPos[0] - 0.4, botPos[1] + 0.5, botPos[2]]} onClick={handleClick}>
+        <boxGeometry args={[0.15, 0.8, 0.15]} />
+        <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
+      </mesh>
+      <mesh position={[botPos[0] + 0.4, botPos[1] + 0.5, botPos[2]]} onClick={handleClick}>
+        <boxGeometry args={[0.15, 0.8, 0.15]} />
+        <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
+      </mesh>
+
+      {/* Legs */}
+      <mesh position={[botPos[0] - 0.15, botPos[1] - 0.8, botPos[2]]} onClick={handleClick}>
+        <boxGeometry args={[0.15, 0.8, 0.15]} />
+        <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
+      </mesh>
+      <mesh position={[botPos[0] + 0.15, botPos[1] - 0.8, botPos[2]]} onClick={handleClick}>
+        <boxGeometry args={[0.15, 0.8, 0.15]} />
+        <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
+      </mesh>
+
+      {/* Weapon */}
+      {!isDead && (
+        <mesh position={[botPos[0] + 0.3, botPos[1] + 0.3, botPos[2] - 0.2]} onClick={handleClick}>
+          <boxGeometry args={[0.1, 0.1, 0.8]} />
+          <meshPhongMaterial color="#222222" />
+        </mesh>
+      )}
+
+      {/* Bot Name with better styling */}
       <Text
-        position={[botPos[0], botPos[1] + 1.7, botPos[2]]}
-        fontSize={0.2}
-        color="white"
+        position={[botPos[0], botPos[1] + 2, botPos[2]]}
+        fontSize={0.15}
+        color={isDead ? "#666666" : "#ff4444"}
         anchorX="center"
         anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#000000"
       >
-        Bot {health > 0 ? '(Alive)' : '(Dead)'}
+        {isDead ? "💀 ELIMINATED" : "🎯 TERRORIST BOT"}
       </Text>
-      {/* Health Bar */}
-      {health > 0 && (
-        <group position={[botPos[0], botPos[1] + 1.4, botPos[2]]}>
-          <Box args={[1, 0.1, 0.02]} position={[0, 0, 0]}>
-            <meshBasicMaterial color="red" />
-          </Box>
-          <Box args={[health / 100, 0.1, 0.03]} position={[-(1 - health / 100) / 2, 0, 0.01]}>
-            <meshBasicMaterial color="green" />
-          </Box>
+      
+      {/* Health Bar - Only show if alive */}
+      {!isDead && (
+        <group position={[botPos[0], botPos[1] + 1.7, botPos[2]]}>
+          {/* Background */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[1, 0.08, 0.02]} />
+            <meshBasicMaterial color="#660000" />
+          </mesh>
+          {/* Health fill */}
+          <mesh position={[-(1 - health / 100) / 2, 0, 0.01]}>
+            <boxGeometry args={[health / 100, 0.08, 0.03]} />
+            <meshBasicMaterial color={health > 50 ? "#00ff00" : health > 25 ? "#ffff00" : "#ff0000"} />
+          </mesh>
         </group>
+      )}
+
+      {/* Hit effect */}
+      {isHit && (
+        <mesh position={[botPos[0], botPos[1] + 0.5, botPos[2]]}>
+          <sphereGeometry args={[0.8]} />
+          <meshBasicMaterial color="#ff0000" transparent opacity={0.3} />
+        </mesh>
       )}
     </group>
   );
 };
 
-// Map/Environment
+// Map/Environment - Enhanced
 const GameMap = () => {
   return (
     <>
-      {/* Ground */}
-      <Plane args={[20, 20]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <meshPhongMaterial color="#404040" />
-      </Plane>
+      {/* Ground with texture pattern */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+        <planeGeometry args={[30, 30]} />
+        <meshPhongMaterial color="#2a2a2a" />
+      </mesh>
       
-      {/* Walls */}
-      <Box args={[0.2, 3, 20]} position={[10, 1.5, 0]}>
-        <meshPhongMaterial color="#666666" />
-      </Box>
-      <Box args={[0.2, 3, 20]} position={[-10, 1.5, 0]}>
-        <meshPhongMaterial color="#666666" />
-      </Box>
-      <Box args={[20, 3, 0.2]} position={[0, 1.5, 10]}>
-        <meshPhongMaterial color="#666666" />
-      </Box>
-      <Box args={[20, 3, 0.2]} position={[0, 1.5, -10]}>
-        <meshPhongMaterial color="#666666" />
-      </Box>
+      {/* Grid pattern on ground */}
+      {Array.from({ length: 6 }, (_, i) => (
+        <group key={i}>
+          <mesh position={[i * 5 - 12.5, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[0.1, 30]} />
+            <meshBasicMaterial color="#444444" />
+          </mesh>
+          <mesh position={[0, 0.01, i * 5 - 12.5]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[30, 0.1]} />
+            <meshBasicMaterial color="#444444" />
+          </mesh>
+        </group>
+      ))}
+      
+      {/* Perimeter walls */}
+      <mesh position={[15, 1.5, 0]} castShadow>
+        <boxGeometry args={[0.5, 3, 30]} />
+        <meshPhongMaterial color="#555555" />
+      </mesh>
+      <mesh position={[-15, 1.5, 0]} castShadow>
+        <boxGeometry args={[0.5, 3, 30]} />
+        <meshPhongMaterial color="#555555" />
+      </mesh>
+      <mesh position={[0, 1.5, 15]} castShadow>
+        <boxGeometry args={[30, 3, 0.5]} />
+        <meshPhongMaterial color="#555555" />
+      </mesh>
+      <mesh position={[0, 1.5, -15]} castShadow>
+        <boxGeometry args={[30, 3, 0.5]} />
+        <meshPhongMaterial color="#555555" />
+      </mesh>
 
-      {/* Some cover objects */}
-      <Box args={[2, 1, 2]} position={[3, 0.5, 3]}>
+      {/* Cover objects - More tactical */}
+      <mesh position={[5, 1, 5]} castShadow>
+        <boxGeometry args={[2, 2, 0.3]} />
+        <meshPhongMaterial color="#666666" />
+      </mesh>
+      <mesh position={[-5, 0.75, -5]} castShadow>
+        <boxGeometry args={[1, 1.5, 1]} />
+        <meshPhongMaterial color="#777777" />
+      </mesh>
+      <mesh position={[0, 0.25, -8]} castShadow>
+        <boxGeometry args={[4, 0.5, 1]} />
         <meshPhongMaterial color="#888888" />
-      </Box>
-      <Box args={[1, 2, 1]} position={[-3, 1, -3]}>
-        <meshPhongMaterial color="#888888" />
-      </Box>
-      <Box args={[3, 0.5, 1]} position={[0, 0.25, -5]}>
-        <meshPhongMaterial color="#888888" />
-      </Box>
+      </mesh>
+      
+      {/* Additional cover - Crates */}
+      <mesh position={[8, 0.5, -3]} castShadow>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshPhongMaterial color="#8B4513" />
+      </mesh>
+      <mesh position={[-8, 0.5, 3]} castShadow>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshPhongMaterial color="#8B4513" />
+      </mesh>
     </>
   );
 };
@@ -202,27 +303,41 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill }: Game3DProps
     <div className="w-full h-screen relative">
       <Crosshair />
       
-      {/* Kill Counter */}
-      <div className="absolute top-4 left-4 z-40 bg-black/50 text-white p-4 rounded">
-        <div className="text-lg font-bold">Kills: {kills}</div>
-        <div className="text-sm">Click on bots to shoot them!</div>
-        <div className="text-xs text-green-400">Use mouse to look around</div>
+      {/* Kill Counter - Enhanced */}
+      <div className="absolute top-4 left-4 z-40 bg-black/80 text-white p-6 rounded-lg border border-red-500/30">
+        <div className="text-2xl font-bold text-red-400">💀 Kills: {kills}</div>
+        <div className="text-sm text-green-400">🎯 Click on bots to shoot!</div>
+        <div className="text-xs text-blue-300">🖱️ Right-click + drag to look around</div>
+        <div className="text-xs text-yellow-300">⚡ Eliminate all terrorists!</div>
       </div>
 
       <Canvas
         camera={{ position: playerPosition, fov: 75 }}
         gl={{ antialias: true }}
+        shadows
       >
-        {/* Lighting */}
-        <ambientLight intensity={0.4} />
+        {/* Enhanced Lighting */}
+        <ambientLight intensity={0.3} />
         <directionalLight
-          position={[10, 10, 5]}
-          intensity={1}
+          position={[10, 20, 10]}
+          intensity={1.2}
           castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
+          shadow-mapSize-width={4096}
+          shadow-mapSize-height={4096}
+          shadow-camera-far={50}
+          shadow-camera-left={-20}
+          shadow-camera-right={20}
+          shadow-camera-top={20}
+          shadow-camera-bottom={-20}
         />
-        <pointLight position={[0, 10, 0]} intensity={0.5} />
+        <pointLight position={[0, 5, 0]} intensity={0.5} color="#ffffff" />
+        <spotLight
+          position={[10, 10, 10]}
+          angle={0.3}
+          penumbra={1}
+          intensity={0.5}
+          castShadow
+        />
 
         {/* Environment */}
         <GameMap />
@@ -235,44 +350,64 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill }: Game3DProps
           health={playerHealth}
         />
 
-        {/* Bots */}
+        {/* Bots - More spread out for better gameplay */}
         <Bot3D
-          position={[5, 0, 5]}
+          position={[7, 0, 8]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[-5, 0, 3]}
+          position={[-6, 0, 5]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[2, 0, 8]}
+          position={[3, 0, -7]}
+          playerPosition={playerPosition}
+          onHit={handleBotHit}
+        />
+        <Bot3D
+          position={[-8, 0, -4]}
+          playerPosition={playerPosition}
+          onHit={handleBotHit}
+        />
+        <Bot3D
+          position={[0, 0, 10]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
 
-        {/* Controls */}
+        {/* Enhanced Controls */}
         <OrbitControls
           enablePan={false}
-          enableZoom={false}
+          enableZoom={true}
           enableRotate={true}
-          minPolarAngle={Math.PI / 4}
+          minDistance={5}
+          maxDistance={15}
+          minPolarAngle={Math.PI / 6}
           maxPolarAngle={Math.PI / 2}
-          mouseButtons={{
-            LEFT: 2, // Right click for looking around
-            MIDDLE: 1,
-            RIGHT: 0 // Left click for shooting
-          }}
+          rotateSpeed={0.5}
+          zoomSpeed={0.5}
         />
       </Canvas>
 
-      {/* Instructions */}
-      <div className="absolute bottom-4 left-4 z-40 bg-black/50 text-white p-4 rounded max-w-sm">
-        <div className="text-sm space-y-1">
-          <div>🎯 <strong>Click</strong> on red bots to shoot them</div>
-          <div>🖱️ <strong>Right-click + drag</strong> to look around</div>
-          <div>🎮 <strong>Goal:</strong> Eliminate all enemy bots</div>
+      {/* Enhanced Instructions */}
+      <div className="absolute bottom-4 left-4 z-40 bg-black/80 text-white p-4 rounded-lg border border-blue-500/30 max-w-sm">
+        <div className="text-sm space-y-2">
+          <div className="text-yellow-400 font-bold">🎮 GAME CONTROLS</div>
+          <div>🎯 <strong>LEFT CLICK</strong> on red bots to shoot</div>
+          <div>🖱️ <strong>RIGHT CLICK + DRAG</strong> to look around</div>
+          <div>🔍 <strong>SCROLL</strong> to zoom in/out</div>
+          <div className="text-red-400 font-bold">⚡ MISSION: Eliminate all terrorists!</div>
+        </div>
+      </div>
+
+      {/* Crosshair Enhancement */}
+      <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center">
+        <div className="relative">
+          <div className="absolute w-8 h-0.5 bg-red-500 -translate-x-4 translate-y-0 shadow-lg"></div>
+          <div className="absolute w-0.5 h-8 bg-red-500 translate-x-0 -translate-y-4 shadow-lg"></div>
+          <div className="w-3 h-3 border-2 border-red-500 rounded-full shadow-lg"></div>
         </div>
       </div>
     </div>
