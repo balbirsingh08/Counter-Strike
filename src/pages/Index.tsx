@@ -24,7 +24,9 @@ const Index = () => {
   }, [gamePresenter, gameView]);
 
   const handlePlayerJoin = (name: string, team: 'terrorist' | 'counter-terrorist') => {
-    gamePresenter.handlePlayerJoin(name, team);
+    console.log('Player joining:', name, team);
+    const player = gamePresenter.handlePlayerJoin(name, team);
+    console.log('Player created:', player);
     setShowPlayerJoin(false);
     setGameStarted(true);
   };
@@ -48,6 +50,9 @@ const Index = () => {
   const currentGameState = gamePresenter.getCurrentGameState();
   const currentPlayer = gamePresenter.getCurrentPlayer();
   const availableWeapons = gamePresenter.getAvailableWeapons();
+  
+  console.log('Current player:', currentPlayer);
+  console.log('Game started:', gameStarted);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
