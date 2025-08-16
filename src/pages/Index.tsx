@@ -15,6 +15,9 @@ const Index = () => {
   const [showPlayerJoin, setShowPlayerJoin] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
 
+  // Use the game view hook to connect React state
+  const gameViewData = gameView.useGameView();
+
   // Connect the view to the presenter
   useEffect(() => {
     gamePresenter.setView(gameView);
