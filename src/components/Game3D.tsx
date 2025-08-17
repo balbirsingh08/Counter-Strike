@@ -1,7 +1,7 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Text, Box, Sphere, Plane } from '@react-three/drei';
-import { useState, useRef, useEffect } from 'react';
-import { Mesh, Vector3 } from 'three';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Text, Box, Sphere, Plane } from '@react-three/drei';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Mesh, Vector3, Euler } from 'three';
 import { useFrame } from '@react-three/fiber';
 
 interface Player3DProps {
@@ -270,14 +270,57 @@ const GameMap = () => {
   );
 };
 
-// Crosshair
-const Crosshair = () => {
+// Mouse Look Controls
+const MouseLookControls = () => {
+  const { camera } = useThree();
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      const sensitivity = 0.002;
+      setRotation(prev => ({
+        x: Math.max(-Math.PI / 2, Math.min(Math.PI / 2, prev.x - event.movementY * sensitivity)),
+        y: prev.y - event.movementX * sensitivity
+      }));
+    };
+
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      canvas.addEventListener('mousemove', handleMouseMove);
+      return () => canvas.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, []);
+
+  useFrame(() => {
+    camera.rotation.x = rotation.x;
+    camera.rotation.y = rotation.y;
+  });
+
+  return null;
+};
+
+// Win Screen Component
+const WinScreen = ({ onRestart, onExit }: { onRestart: () => void; onExit: () => void }) => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
-      <div className="relative">
-        <div className="absolute w-6 h-0.5 bg-white -translate-x-3 translate-y-0"></div>
-        <div className="absolute w-0.5 h-6 bg-white translate-x-0 -translate-y-3"></div>
-        <div className="w-2 h-2 border border-white rounded-full"></div>
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+      <div className="bg-gradient-to-b from-green-900 to-green-700 p-8 rounded-lg border-2 border-green-400 text-center max-w-md">
+        <div className="text-4xl mb-4">🏆</div>
+        <div className="text-2xl font-bold text-green-100 mb-2">MISSION ACCOMPLISHED!</div>
+        <div className="text-lg text-green-200 mb-6">All terrorists eliminated!</div>
+        <div className="space-y-3">
+          <button
+            onClick={onRestart}
+            className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+          >
+            🔄 Play Again
+          </button>
+          <button
+            onClick={onExit}
+            className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+          >
+            🚪 Exit Game
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -288,26 +331,49 @@ interface Game3DProps {
   playerTeam: 'terrorist' | 'counter-terrorist';
   playerHealth: number;
   onBotKill: () => void;
+  onGameExit?: () => void;
 }
 
-const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill }: Game3DProps) => {
+const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }: Game3DProps) => {
   const [playerPosition] = useState<[number, number, number]>([0, 0, -8]);
   const [kills, setKills] = useState(0);
+  const [gameWon, setGameWon] = useState(false);
+  const totalBots = 5;
 
   const handleBotHit = () => {
-    setKills(prev => prev + 1);
+    const newKills = kills + 1;
+    setKills(newKills);
     onBotKill();
+    
+    if (newKills >= totalBots) {
+      setGameWon(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setKills(0);
+    setGameWon(false);
+    // This will trigger a re-render and reset all bots
+    window.location.reload();
+  };
+
+  const handleExit = () => {
+    if (onGameExit) {
+      onGameExit();
+    }
   };
 
   return (
     <div className="w-full h-screen relative">
-      <Crosshair />
+      {gameWon && (
+        <WinScreen onRestart={handleRestart} onExit={handleExit} />
+      )}
       
       {/* Kill Counter - Enhanced */}
       <div className="absolute top-4 left-4 z-40 bg-black/80 text-white p-6 rounded-lg border border-red-500/30">
         <div className="text-2xl font-bold text-red-400">💀 Kills: {kills}</div>
         <div className="text-sm text-green-400">🎯 Click on bots to shoot!</div>
-        <div className="text-xs text-blue-300">🖱️ Right-click + drag to look around</div>
+        <div className="text-xs text-blue-300">🖱️ Move mouse to look around</div>
         <div className="text-xs text-yellow-300">⚡ Eliminate all terrorists!</div>
       </div>
 
@@ -377,18 +443,8 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill }: Game3DProps
           onHit={handleBotHit}
         />
 
-        {/* Enhanced Controls */}
-        <OrbitControls
-          enablePan={false}
-          enableZoom={true}
-          enableRotate={true}
-          minDistance={5}
-          maxDistance={15}
-          minPolarAngle={Math.PI / 6}
-          maxPolarAngle={Math.PI / 2}
-          rotateSpeed={0.5}
-          zoomSpeed={0.5}
-        />
+        {/* Mouse Look Controls */}
+        <MouseLookControls />
       </Canvas>
 
       {/* Enhanced Instructions */}
@@ -396,8 +452,7 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill }: Game3DProps
         <div className="text-sm space-y-2">
           <div className="text-yellow-400 font-bold">🎮 GAME CONTROLS</div>
           <div>🎯 <strong>LEFT CLICK</strong> on red bots to shoot</div>
-          <div>🖱️ <strong>RIGHT CLICK + DRAG</strong> to look around</div>
-          <div>🔍 <strong>SCROLL</strong> to zoom in/out</div>
+          <div>🖱️ <strong>MOVE MOUSE</strong> to look around</div>
           <div className="text-red-400 font-bold">⚡ MISSION: Eliminate all terrorists!</div>
         </div>
       </div>

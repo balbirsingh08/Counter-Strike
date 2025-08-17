@@ -73,6 +73,7 @@ const Index = () => {
         playerTeam={currentPlayer.team}
         playerHealth={currentPlayer.health}
         onBotKill={handleBotKill}
+        onGameExit={() => setGameMode('menu')}
       />
     );
   }
