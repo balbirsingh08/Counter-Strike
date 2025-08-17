@@ -111,10 +111,9 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
   const isDead = health <= 0;
 
   return (
-    <group>
-      {/* Bot Body - Improved visuals */}
-      <mesh ref={meshRef} position={botPos} onClick={handleClick}>
-        {/* Torso */}
+    <group position={botPos}>
+      {/* Bot Body - Fixed positioning */}
+      <mesh ref={meshRef} position={[0, 0.6, 0]} onClick={handleClick}>
         <boxGeometry args={[0.6, 1.2, 0.3]} />
         <meshPhongMaterial 
           color={isDead ? "#444444" : isHit ? "#ff0000" : "#cc3333"} 
@@ -123,8 +122,8 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
         />
       </mesh>
       
-      {/* Bot Head */}
-      <mesh position={[botPos[0], botPos[1] + 1.4, botPos[2]]} onClick={handleClick}>
+      {/* Bot Head - Fixed positioning */}
+      <mesh position={[0, 1.4, 0]} onClick={handleClick}>
         <sphereGeometry args={[0.25]} />
         <meshPhongMaterial 
           color={isDead ? "#333333" : isHit ? "#ff4444" : "#bb2222"} 
@@ -133,37 +132,37 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
         />
       </mesh>
 
-      {/* Arms */}
-      <mesh position={[botPos[0] - 0.4, botPos[1] + 0.5, botPos[2]]} onClick={handleClick}>
+      {/* Arms - Fixed positioning */}
+      <mesh position={[-0.4, 0.5, 0]} onClick={handleClick}>
         <boxGeometry args={[0.15, 0.8, 0.15]} />
         <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
       </mesh>
-      <mesh position={[botPos[0] + 0.4, botPos[1] + 0.5, botPos[2]]} onClick={handleClick}>
+      <mesh position={[0.4, 0.5, 0]} onClick={handleClick}>
         <boxGeometry args={[0.15, 0.8, 0.15]} />
         <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
       </mesh>
 
-      {/* Legs */}
-      <mesh position={[botPos[0] - 0.15, botPos[1] - 0.8, botPos[2]]} onClick={handleClick}>
+      {/* Legs - Fixed positioning */}
+      <mesh position={[-0.15, -0.2, 0]} onClick={handleClick}>
         <boxGeometry args={[0.15, 0.8, 0.15]} />
         <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
       </mesh>
-      <mesh position={[botPos[0] + 0.15, botPos[1] - 0.8, botPos[2]]} onClick={handleClick}>
+      <mesh position={[0.15, -0.2, 0]} onClick={handleClick}>
         <boxGeometry args={[0.15, 0.8, 0.15]} />
         <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
       </mesh>
 
-      {/* Weapon */}
+      {/* Weapon - Fixed positioning */}
       {!isDead && (
-        <mesh position={[botPos[0] + 0.3, botPos[1] + 0.3, botPos[2] - 0.2]} onClick={handleClick}>
+        <mesh position={[0.3, 0.3, -0.2]} onClick={handleClick}>
           <boxGeometry args={[0.1, 0.1, 0.8]} />
           <meshPhongMaterial color="#222222" />
         </mesh>
       )}
 
-      {/* Bot Name with better styling */}
+      {/* Bot Name with better styling - Fixed positioning */}
       <Text
-        position={[botPos[0], botPos[1] + 2, botPos[2]]}
+        position={[0, 2.2, 0]}
         fontSize={0.15}
         color={isDead ? "#666666" : "#ff4444"}
         anchorX="center"
@@ -174,9 +173,9 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
         {isDead ? "💀 ELIMINATED" : "🎯 TERRORIST BOT"}
       </Text>
       
-      {/* Health Bar - Only show if alive */}
+      {/* Health Bar - Only show if alive - Fixed positioning */}
       {!isDead && (
-        <group position={[botPos[0], botPos[1] + 1.7, botPos[2]]}>
+        <group position={[0, 1.9, 0]}>
           {/* Background */}
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[1, 0.08, 0.02]} />
@@ -190,9 +189,9 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
         </group>
       )}
 
-      {/* Hit effect */}
+      {/* Hit effect - Fixed positioning */}
       {isHit && (
-        <mesh position={[botPos[0], botPos[1] + 0.5, botPos[2]]}>
+        <mesh position={[0, 0.5, 0]}>
           <sphereGeometry args={[0.8]} />
           <meshBasicMaterial color="#ff0000" transparent opacity={0.3} />
         </mesh>
@@ -277,9 +276,9 @@ const MouseLookControls = () => {
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      const sensitivity = 0.002;
+      const sensitivity = 0.0005; // Reduced sensitivity for smoother movement
       setRotation(prev => ({
-        x: Math.max(-Math.PI / 2, Math.min(Math.PI / 2, prev.x - event.movementY * sensitivity)),
+        x: Math.max(-Math.PI / 3, Math.min(Math.PI / 3, prev.x - event.movementY * sensitivity)),
         y: prev.y - event.movementX * sensitivity
       }));
     };
