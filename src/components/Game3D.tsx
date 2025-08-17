@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text, Box, Sphere, Plane } from '@react-three/drei';
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Mesh, Vector3, Euler } from 'three';
+import { useState, useRef, useEffect } from 'react';
+import { Mesh, Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
 
 interface Player3DProps {
@@ -433,6 +433,7 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }:
           <div className="text-yellow-400 font-bold">🎮 GAME CONTROLS</div>
           <div>🎯 <strong>LEFT CLICK</strong> on red bots to shoot</div>
           <div>🖱️ <strong>RIGHT CLICK + DRAG</strong> to look around</div>
+          <div>🔍 <strong>SCROLL</strong> to zoom in/out</div>
           <div className="text-red-400 font-bold">⚡ MISSION: Eliminate all terrorists!</div>
         </div>
       </div>
