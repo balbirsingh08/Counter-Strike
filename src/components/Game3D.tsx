@@ -1,5 +1,5 @@
-import { Canvas, useThree } from '@react-three/fiber';
-import { Text, Box, Sphere, Plane } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Text, Box, Sphere, Plane } from '@react-three/drei';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Mesh, Vector3, Euler } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -269,35 +269,6 @@ const GameMap = () => {
   );
 };
 
-// Mouse Look Controls
-const MouseLookControls = () => {
-  const { camera } = useThree();
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const sensitivity = 0.0005; // Reduced sensitivity for smoother movement
-      setRotation(prev => ({
-        x: Math.max(-Math.PI / 3, Math.min(Math.PI / 3, prev.x - event.movementY * sensitivity)),
-        y: prev.y - event.movementX * sensitivity
-      }));
-    };
-
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      canvas.addEventListener('mousemove', handleMouseMove);
-      return () => canvas.removeEventListener('mousemove', handleMouseMove);
-    }
-  }, []);
-
-  useFrame(() => {
-    camera.rotation.x = rotation.x;
-    camera.rotation.y = rotation.y;
-  });
-
-  return null;
-};
-
 // Win Screen Component
 const WinScreen = ({ onRestart, onExit }: { onRestart: () => void; onExit: () => void }) => {
   return (
@@ -372,7 +343,7 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }:
       <div className="absolute top-4 left-4 z-40 bg-black/80 text-white p-6 rounded-lg border border-red-500/30">
         <div className="text-2xl font-bold text-red-400">💀 Kills: {kills}</div>
         <div className="text-sm text-green-400">🎯 Click on bots to shoot!</div>
-        <div className="text-xs text-blue-300">🖱️ Move mouse to look around</div>
+        <div className="text-xs text-blue-300">🖱️ Right-click + drag to look around</div>
         <div className="text-xs text-yellow-300">⚡ Eliminate all terrorists!</div>
       </div>
 
@@ -442,8 +413,18 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }:
           onHit={handleBotHit}
         />
 
-        {/* Mouse Look Controls */}
-        <MouseLookControls />
+        {/* Enhanced Controls */}
+        <OrbitControls
+          enablePan={false}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={5}
+          maxDistance={15}
+          minPolarAngle={Math.PI / 6}
+          maxPolarAngle={Math.PI / 2}
+          rotateSpeed={0.5}
+          zoomSpeed={0.5}
+        />
       </Canvas>
 
       {/* Enhanced Instructions */}
@@ -451,7 +432,7 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }:
         <div className="text-sm space-y-2">
           <div className="text-yellow-400 font-bold">🎮 GAME CONTROLS</div>
           <div>🎯 <strong>LEFT CLICK</strong> on red bots to shoot</div>
-          <div>🖱️ <strong>MOVE MOUSE</strong> to look around</div>
+          <div>🖱️ <strong>RIGHT CLICK + DRAG</strong> to look around</div>
           <div className="text-red-400 font-bold">⚡ MISSION: Eliminate all terrorists!</div>
         </div>
       </div>
