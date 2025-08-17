@@ -99,6 +99,7 @@ export class GameModel {
 
   private initializeWeapons(): Weapon[] {
     return [
+      // Rifles
       {
         id: 'ak47',
         name: 'AK-47',
@@ -126,6 +127,20 @@ export class GameModel {
         recoilPattern: [0, 1, 3, 5, 7, 9, 7, 5, 3, 1],
       },
       {
+        id: 'm4a1s',
+        name: 'M4A1-S',
+        type: 'rifle',
+        damage: 38,
+        accuracy: 82,
+        fireRate: 600,
+        magazineSize: 25,
+        currentAmmo: 25,
+        reserveAmmo: 75,
+        price: 2900,
+        recoilPattern: [0, 1, 2, 4, 6, 8, 6, 4, 2, 1],
+      },
+      // Snipers
+      {
         id: 'awp',
         name: 'AWP',
         type: 'sniper',
@@ -139,6 +154,47 @@ export class GameModel {
         recoilPattern: [0, 5, 10, 15, 20],
       },
       {
+        id: 'ssg08',
+        name: 'SSG 08',
+        type: 'sniper',
+        damage: 88,
+        accuracy: 92,
+        fireRate: 48,
+        magazineSize: 10,
+        currentAmmo: 10,
+        reserveAmmo: 90,
+        price: 1700,
+        recoilPattern: [0, 3, 6, 9, 12],
+      },
+      // SMGs
+      {
+        id: 'mp9',
+        name: 'MP9',
+        type: 'smg',
+        damage: 26,
+        accuracy: 62,
+        fireRate: 857,
+        magazineSize: 30,
+        currentAmmo: 30,
+        reserveAmmo: 120,
+        price: 1250,
+        recoilPattern: [0, 1, 2, 3, 4, 5, 4, 3, 2, 1],
+      },
+      {
+        id: 'p90',
+        name: 'P90',
+        type: 'smg',
+        damage: 26,
+        accuracy: 68,
+        fireRate: 857,
+        magazineSize: 50,
+        currentAmmo: 50,
+        reserveAmmo: 100,
+        price: 2350,
+        recoilPattern: [0, 1, 2, 3, 4, 3, 2, 1],
+      },
+      // Pistols
+      {
         id: 'glock',
         name: 'Glock-18',
         type: 'pistol',
@@ -151,6 +207,46 @@ export class GameModel {
         price: 200,
         recoilPattern: [0, 1, 2, 3, 4],
       },
+      {
+        id: 'usp',
+        name: 'USP-S',
+        type: 'pistol',
+        damage: 35,
+        accuracy: 66,
+        fireRate: 352,
+        magazineSize: 12,
+        currentAmmo: 12,
+        reserveAmmo: 24,
+        price: 200,
+        recoilPattern: [0, 1, 2, 3],
+      },
+      {
+        id: 'deagle',
+        name: 'Desert Eagle',
+        type: 'pistol',
+        damage: 63,
+        accuracy: 74,
+        fireRate: 267,
+        magazineSize: 7,
+        currentAmmo: 7,
+        reserveAmmo: 35,
+        price: 700,
+        recoilPattern: [0, 2, 4, 6, 8],
+      },
+      // Shotguns
+      {
+        id: 'nova',
+        name: 'Nova',
+        type: 'shotgun',
+        damage: 26,
+        accuracy: 51,
+        fireRate: 68,
+        magazineSize: 8,
+        currentAmmo: 8,
+        reserveAmmo: 32,
+        price: 1050,
+        recoilPattern: [0, 3, 6, 9],
+      }
     ];
   }
 

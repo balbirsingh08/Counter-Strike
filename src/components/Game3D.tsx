@@ -3,6 +3,7 @@ import { OrbitControls, Text, Box, Sphere, Plane } from '@react-three/drei';
 import { useState, useRef, useEffect } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
+import { Weapon3D } from './Weapon3D';
 
 interface Player3DProps {
   position: [number, number, number];
@@ -152,12 +153,14 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
         <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
       </mesh>
 
-      {/* Weapon - Fixed positioning */}
+      {/* Weapon - Enhanced 3D Model */}
       {!isDead && (
-        <mesh position={[0.3, 0.3, -0.2]} onClick={handleClick}>
-          <boxGeometry args={[0.1, 0.1, 0.8]} />
-          <meshPhongMaterial color="#222222" />
-        </mesh>
+        <Weapon3D
+          weaponType="rifle"
+          position={[0.3, 0.3, -0.2]}
+          rotation={[0, 0, 0]}
+          scale={0.8}
+        />
       )}
 
       {/* Bot Name with better styling - Fixed positioning */}
