@@ -267,6 +267,7 @@ export class GameModel {
     const newPlayer: Player = {
       ...player,
       id: `player_${Date.now()}_${Math.random()}`,
+      money: 16000, // Give players enough money to buy any weapon
     };
     this.gameState.players.push(newPlayer);
     return newPlayer;

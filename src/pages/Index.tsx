@@ -72,6 +72,7 @@ const Index = () => {
         playerName={currentPlayer.name}
         playerTeam={currentPlayer.team}
         playerHealth={currentPlayer.health}
+        playerWeapon={currentPlayer.weapons[0]}
         onBotKill={handleBotKill}
         onGameExit={() => setGameMode('menu')}
       />
@@ -114,10 +115,10 @@ const Index = () => {
           <div className="text-center space-y-8 p-8">
             <div className="space-y-4">
               <h1 className="text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-                Counter-Strike MVP
+                Counter-Strike Game
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Model-View-Presenter architecture implementation of tactical FPS gameplay
+                Tactical FPS gameplay experience
               </p>
             </div>
 
@@ -142,37 +143,6 @@ const Index = () => {
               >
                 Buy Weapons (B)
               </Button>
-              
-              <Button
-                onClick={handleStartRound}
-                variant="secondary"
-                size="lg"
-                className="px-8"
-              >
-                Start Round
-              </Button>
-            </div>
-
-            {/* Game Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto text-sm">
-              <div className="text-center">
-                <h3 className="font-semibold text-primary mb-2">Model</h3>
-                <p className="text-muted-foreground">
-                  Authoritative game state, player data, weapon stats, and game rules
-                </p>
-              </div>
-              <div className="text-center">
-                <h3 className="font-semibold text-secondary mb-2">View</h3>
-                <p className="text-muted-foreground">
-                  React components, HUD elements, animations, and visual presentation
-                </p>
-              </div>
-              <div className="text-center">
-                <h3 className="font-semibold text-primary mb-2">Presenter</h3>
-                <p className="text-muted-foreground">
-                  Input handling, game logic, state updates, and view coordination
-                </p>
-              </div>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Weapon3D } from './Weapon3D';
+import { Weapon } from '../models/GameModel';
 
 interface Player3DProps {
   position: [number, number, number];
@@ -303,11 +304,12 @@ interface Game3DProps {
   playerName: string;
   playerTeam: 'terrorist' | 'counter-terrorist';
   playerHealth: number;
+  playerWeapon?: Weapon;
   onBotKill: () => void;
   onGameExit?: () => void;
 }
 
-const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }: Game3DProps) => {
+const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill, onGameExit }: Game3DProps) => {
   const [playerPosition] = useState<[number, number, number]>([0, 0, -8]);
   const [kills, setKills] = useState(0);
   const [gameWon, setGameWon] = useState(false);
@@ -388,6 +390,16 @@ const Game3D = ({ playerName, playerTeam, playerHealth, onBotKill, onGameExit }:
           name={playerName}
           health={playerHealth}
         />
+
+        {/* Player's Weapon in Hand */}
+        {playerWeapon && playerWeapon.type !== 'grenade' && (
+          <Weapon3D
+            weaponType={playerWeapon.type}
+            position={[playerPosition[0] + 0.3, playerPosition[1] + 0.1, playerPosition[2] + 0.2]}
+            rotation={[0, Math.PI / 4, 0]}
+            scale={0.5}
+          />
+        )}
 
         {/* Bots - More spread out for better gameplay */}
         <Bot3D
