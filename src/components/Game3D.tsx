@@ -19,44 +19,115 @@ interface Bot3DProps {
   onHit: () => void;
 }
 
-// Player Component
+// Enhanced Player Component - CS Style
 const Player3D = ({ position, color, name, health }: Player3DProps) => {
+  const meshRef = useRef<Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      // Subtle idle animation
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.02;
+    }
+  });
+
   return (
     <group position={position}>
-      {/* Player Body */}
-      <Box args={[0.5, 1.5, 0.3]} position={[0, 0.75, 0]}>
-        <meshPhongMaterial color={color} />
-      </Box>
-      {/* Player Head */}
-      <Sphere args={[0.3]} position={[0, 1.8, 0]}>
-        <meshPhongMaterial color={color} />
-      </Sphere>
-      {/* Player Name */}
+      {/* Main Body - More realistic proportions */}
+      <mesh ref={meshRef} position={[0, 0.9, 0]} castShadow>
+        <boxGeometry args={[0.6, 1.2, 0.35]} />
+        <meshLambertMaterial color={color} />
+      </mesh>
+      
+      {/* Chest Armor/Vest */}
+      <mesh position={[0, 1.1, 0.18]} castShadow>
+        <boxGeometry args={[0.55, 0.8, 0.15]} />
+        <meshLambertMaterial color="#2a2a2a" />
+      </mesh>
+      
+      {/* Head - More detailed */}
+      <mesh position={[0, 1.85, 0]} castShadow>
+        <boxGeometry args={[0.35, 0.4, 0.35]} />
+        <meshLambertMaterial color="#fdbcb4" />
+      </mesh>
+      
+      {/* Helmet */}
+      <mesh position={[0, 2.0, 0]} castShadow>
+        <boxGeometry args={[0.4, 0.25, 0.4]} />
+        <meshLambertMaterial color="#1a1a1a" />
+      </mesh>
+      
+      {/* Arms */}
+      <mesh position={[-0.4, 0.8, 0]} rotation={[0, 0, 0.2]} castShadow>
+        <boxGeometry args={[0.18, 0.9, 0.18]} />
+        <meshLambertMaterial color={color} />
+      </mesh>
+      <mesh position={[0.4, 0.8, 0]} rotation={[0, 0, -0.2]} castShadow>
+        <boxGeometry args={[0.18, 0.9, 0.18]} />
+        <meshLambertMaterial color={color} />
+      </mesh>
+      
+      {/* Hands */}
+      <mesh position={[-0.5, 0.3, 0]} castShadow>
+        <boxGeometry args={[0.12, 0.12, 0.12]} />
+        <meshLambertMaterial color="#fdbcb4" />
+      </mesh>
+      <mesh position={[0.5, 0.3, 0]} castShadow>
+        <boxGeometry args={[0.12, 0.12, 0.12]} />
+        <meshLambertMaterial color="#fdbcb4" />
+      </mesh>
+      
+      {/* Legs */}
+      <mesh position={[-0.15, 0.1, 0]} castShadow>
+        <boxGeometry args={[0.2, 0.8, 0.2]} />
+        <meshLambertMaterial color="#333333" />
+      </mesh>
+      <mesh position={[0.15, 0.1, 0]} castShadow>
+        <boxGeometry args={[0.2, 0.8, 0.2]} />
+        <meshLambertMaterial color="#333333" />
+      </mesh>
+      
+      {/* Boots */}
+      <mesh position={[-0.15, -0.35, 0.1]} castShadow>
+        <boxGeometry args={[0.25, 0.15, 0.4]} />
+        <meshLambertMaterial color="#1a1a1a" />
+      </mesh>
+      <mesh position={[0.15, -0.35, 0.1]} castShadow>
+        <boxGeometry args={[0.25, 0.15, 0.4]} />
+        <meshLambertMaterial color="#1a1a1a" />
+      </mesh>
+
+      {/* Player Name with better styling */}
       <Text
-        position={[0, 2.5, 0]}
-        fontSize={0.2}
+        position={[0, 2.7, 0]}
+        fontSize={0.15}
         color="white"
         anchorX="center"
         anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#000000"
       >
         {name}
       </Text>
-      {/* Health Bar */}
-      <group position={[0, 2.2, 0]}>
-        <Box args={[1, 0.1, 0.02]} position={[0, 0, 0]}>
-          <meshBasicMaterial color="red" />
-        </Box>
-        <Box args={[health / 100, 0.1, 0.03]} position={[-(1 - health / 100) / 2, 0, 0.01]}>
-          <meshBasicMaterial color="green" />
-        </Box>
+      
+      {/* Enhanced Health Bar */}
+      <group position={[0, 2.4, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[1.2, 0.08, 0.02]} />
+          <meshBasicMaterial color="#660000" />
+        </mesh>
+        <mesh position={[-(1.2 - (health / 100) * 1.2) / 2, 0, 0.01]}>
+          <boxGeometry args={[(health / 100) * 1.2, 0.08, 0.03]} />
+          <meshBasicMaterial color={health > 50 ? "#00ff00" : health > 25 ? "#ffff00" : "#ff0000"} />
+        </mesh>
       </group>
     </group>
   );
 };
 
-// Bot Component with AI
+// Enhanced Bot Component - CS Terrorist Style
 const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
   const meshRef = useRef<Mesh>(null);
+  const bodyRef = useRef<Mesh>(null);
   const [botPos, setBotPos] = useState<[number, number, number]>(position);
   const [isMoving, setIsMoving] = useState(true);
   const [health, setHealth] = useState(100);
@@ -68,22 +139,28 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
 
     const time = state.clock.elapsedTime;
     
-    // Simple AI movement - patrol pattern
+    // Enhanced AI movement - more realistic patrol
     if (isMoving && health > 0) {
-      const newX = position[0] + Math.sin(time * 0.3) * 2;
-      const newZ = position[2] + Math.cos(time * 0.2) * 1.5;
+      const newX = position[0] + Math.sin(time * 0.4) * 2.5;
+      const newZ = position[2] + Math.cos(time * 0.3) * 2;
       setBotPos([newX, position[1], newZ]);
       meshRef.current.position.set(newX, position[1], newZ);
+      
+      // Add walking animation
+      if (bodyRef.current) {
+        bodyRef.current.rotation.x = Math.sin(time * 4) * 0.1;
+        bodyRef.current.position.y = 0.9 + Math.sin(time * 8) * 0.03;
+      }
     }
 
-    // Look at player
+    // Look at player smoothly
     const playerVec = new Vector3(...playerPosition);
     if (health > 0) {
       meshRef.current.lookAt(playerVec);
     }
 
     // Shoot at player occasionally
-    if (time - lastShot > 4 && health > 0) {
+    if (time - lastShot > 3 && health > 0) {
       setLastShot(time);
       console.log('Bot shooting at player!');
     }
@@ -111,93 +188,175 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
   };
 
   const isDead = health <= 0;
+  const hitColor = isHit ? "#ff0000" : "#cc3333";
+  const deadColor = "#444444";
 
   return (
     <group position={botPos}>
-      {/* Bot Body - Fixed positioning */}
-      <mesh ref={meshRef} position={[0, 0.6, 0]} onClick={handleClick}>
-        <boxGeometry args={[0.6, 1.2, 0.3]} />
-        <meshPhongMaterial 
-          color={isDead ? "#444444" : isHit ? "#ff0000" : "#cc3333"} 
-          transparent={isDead}
-          opacity={isDead ? 0.5 : 1}
-        />
-      </mesh>
-      
-      {/* Bot Head - Fixed positioning */}
-      <mesh position={[0, 1.4, 0]} onClick={handleClick}>
-        <sphereGeometry args={[0.25]} />
-        <meshPhongMaterial 
-          color={isDead ? "#333333" : isHit ? "#ff4444" : "#bb2222"} 
-          transparent={isDead}
-          opacity={isDead ? 0.5 : 1}
-        />
+      <mesh ref={meshRef} position={[0, 0, 0]}>
+        {/* Main Body - Terrorist outfit */}
+        <mesh ref={bodyRef} position={[0, 0.9, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.6, 1.2, 0.35]} />
+          <meshLambertMaterial 
+            color={isDead ? deadColor : hitColor} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Tactical Vest */}
+        <mesh position={[0, 1.1, 0.18]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.55, 0.8, 0.15]} />
+          <meshLambertMaterial 
+            color={isDead ? "#222222" : "#1a1a1a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Head - More detailed */}
+        <mesh position={[0, 1.85, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.35, 0.4, 0.35]} />
+          <meshLambertMaterial 
+            color={isDead ? "#888888" : "#fdbcb4"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Terrorist Mask/Balaclava */}
+        <mesh position={[0, 1.9, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.38, 0.35, 0.38]} />
+          <meshLambertMaterial 
+            color={isDead ? "#111111" : "#000000"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Arms with better positioning */}
+        <mesh position={[-0.4, 0.8, 0]} rotation={[0, 0, 0.3]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.18, 0.9, 0.18]} />
+          <meshLambertMaterial 
+            color={isDead ? deadColor : hitColor} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.4, 0.8, 0]} rotation={[0, 0, -0.3]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.18, 0.9, 0.18]} />
+          <meshLambertMaterial 
+            color={isDead ? deadColor : hitColor} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Hands */}
+        <mesh position={[-0.5, 0.25, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.12, 0.12, 0.12]} />
+          <meshLambertMaterial 
+            color={isDead ? "#666666" : "#8B4513"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.5, 0.25, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.12, 0.12, 0.12]} />
+          <meshLambertMaterial 
+            color={isDead ? "#666666" : "#8B4513"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Legs - Tactical pants */}
+        <mesh position={[-0.15, 0.1, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.2, 0.8, 0.2]} />
+          <meshLambertMaterial 
+            color={isDead ? "#222222" : "#2a2a2a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.15, 0.1, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.2, 0.8, 0.2]} />
+          <meshLambertMaterial 
+            color={isDead ? "#222222" : "#2a2a2a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Combat Boots */}
+        <mesh position={[-0.15, -0.35, 0.1]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.25, 0.15, 0.4]} />
+          <meshLambertMaterial 
+            color={isDead ? "#111111" : "#1a1a1a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.15, -0.35, 0.1]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.25, 0.15, 0.4]} />
+          <meshLambertMaterial 
+            color={isDead ? "#111111" : "#1a1a1a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
       </mesh>
 
-      {/* Arms - Fixed positioning */}
-      <mesh position={[-0.4, 0.5, 0]} onClick={handleClick}>
-        <boxGeometry args={[0.15, 0.8, 0.15]} />
-        <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
-      </mesh>
-      <mesh position={[0.4, 0.5, 0]} onClick={handleClick}>
-        <boxGeometry args={[0.15, 0.8, 0.15]} />
-        <meshPhongMaterial color={isDead ? "#444444" : "#aa2222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
-      </mesh>
-
-      {/* Legs - Fixed positioning */}
-      <mesh position={[-0.15, -0.2, 0]} onClick={handleClick}>
-        <boxGeometry args={[0.15, 0.8, 0.15]} />
-        <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
-      </mesh>
-      <mesh position={[0.15, -0.2, 0]} onClick={handleClick}>
-        <boxGeometry args={[0.15, 0.8, 0.15]} />
-        <meshPhongMaterial color={isDead ? "#333333" : "#992222"} transparent={isDead} opacity={isDead ? 0.5 : 1} />
-      </mesh>
-
-      {/* Weapon - Enhanced 3D Model */}
+      {/* Enhanced Weapon - AK-47 style */}
       {!isDead && (
         <Weapon3D
           weaponType="rifle"
-          position={[0.3, 0.3, -0.2]}
+          position={[0.3, 0.4, -0.1]}
           rotation={[0, 0, 0]}
-          scale={0.8}
+          scale={0.9}
         />
       )}
 
-      {/* Bot Name with better styling - Fixed positioning */}
+      {/* Bot Name with terrorist styling */}
       <Text
-        position={[0, 2.2, 0]}
-        fontSize={0.15}
+        position={[0, 2.6, 0]}
+        fontSize={0.12}
         color={isDead ? "#666666" : "#ff4444"}
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#000000"
       >
-        {isDead ? "💀 ELIMINATED" : "🎯 TERRORIST BOT"}
+        {isDead ? "💀 ELIMINATED" : "☠️ TERRORIST"}
       </Text>
       
-      {/* Health Bar - Only show if alive - Fixed positioning */}
+      {/* Enhanced Health Bar */}
       {!isDead && (
-        <group position={[0, 1.9, 0]}>
-          {/* Background */}
+        <group position={[0, 2.3, 0]}>
           <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[1, 0.08, 0.02]} />
+            <boxGeometry args={[1.2, 0.08, 0.02]} />
             <meshBasicMaterial color="#660000" />
           </mesh>
-          {/* Health fill */}
-          <mesh position={[-(1 - health / 100) / 2, 0, 0.01]}>
-            <boxGeometry args={[health / 100, 0.08, 0.03]} />
+          <mesh position={[-(1.2 - (health / 100) * 1.2) / 2, 0, 0.01]}>
+            <boxGeometry args={[(health / 100) * 1.2, 0.08, 0.03]} />
             <meshBasicMaterial color={health > 50 ? "#00ff00" : health > 25 ? "#ffff00" : "#ff0000"} />
           </mesh>
         </group>
       )}
 
-      {/* Hit effect - Fixed positioning */}
+      {/* Enhanced hit effect */}
       {isHit && (
-        <mesh position={[0, 0.5, 0]}>
-          <sphereGeometry args={[0.8]} />
-          <meshBasicMaterial color="#ff0000" transparent opacity={0.3} />
+        <mesh position={[0, 0.9, 0]}>
+          <sphereGeometry args={[1]} />
+          <meshBasicMaterial color="#ff0000" transparent opacity={0.4} />
+        </mesh>
+      )}
+
+      {/* Blood effect when dead */}
+      {isDead && (
+        <mesh position={[0, 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.5, 8]} />
+          <meshBasicMaterial color="#8B0000" transparent opacity={0.6} />
         </mesh>
       )}
     </group>
