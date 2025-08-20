@@ -84,4 +84,5 @@ The View is the client’s rendering and audio system, responsible solely for pr
 The Presenter sits between the Model and View, managing player inputs, game state updates, and communication with the server. It processes actions like shooting or moving, validates them locally, sends requests to the Model, and receives authoritative updates. It also implements client-side prediction and reconciliation to hide network latency, ensuring smooth gameplay. Finally, it decides what visual and audio updates the View should display based on the latest game state.
 
 This separation ensures that Counter-Strike maintains responsive, fair, and visually engaging gameplay. The Model secures the rules, the View focuses on immersive presentation, and the Presenter coordinates the two for a seamless player experience.
+<img width="1023" height="687" alt="image" src="https://github.com/user-attachments/assets/d3323d7a-5518-4d9e-8e2c-db20cedd0654" />
 
