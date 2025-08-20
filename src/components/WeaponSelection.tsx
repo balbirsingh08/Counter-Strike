@@ -36,6 +36,28 @@ export const WeaponSelection = ({
     }
   };
 
+  const getWeaponIcon = (type: string, name: string) => {
+    // Specific weapon icons
+    if (name.includes('AK-47')) return '🔫';
+    if (name.includes('M4A4') || name.includes('M4A1-S')) return '🏹';
+    if (name.includes('AWP')) return '🎯';
+    if (name.includes('Glock')) return '🔫';
+    if (name.includes('USP') || name.includes('Desert Eagle')) return '🔫';
+    if (name.includes('P90') || name.includes('MP9')) return '⚡';
+    if (name.includes('SSG 08')) return '🎯';
+    if (name.includes('Nova')) return '💥';
+    
+    // Fallback by type
+    switch (type) {
+      case 'rifle': return '🔫';
+      case 'pistol': return '🔫';
+      case 'sniper': return '🎯';
+      case 'smg': return '⚡';
+      case 'shotgun': return '💥';
+      default: return '🔫';
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-6xl max-h-[80vh] overflow-auto">
@@ -77,22 +99,27 @@ export const WeaponSelection = ({
                         }`}
                       >
                         <div className="space-y-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-bold text-lg">{weapon.name}</h4>
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs mt-1"
-                              >
-                                {weapon.type.toUpperCase()}
-                              </Badge>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-primary">
-                                ${weapon.price}
-                              </div>
-                            </div>
-                          </div>
+                           <div className="flex justify-between items-start">
+                             <div className="flex items-center gap-3">
+                               <div className="text-3xl">
+                                 {getWeaponIcon(weapon.type, weapon.name)}
+                               </div>
+                               <div>
+                                 <h4 className="font-bold text-lg">{weapon.name}</h4>
+                                 <Badge 
+                                   variant="secondary" 
+                                   className="text-xs mt-1"
+                                 >
+                                   {weapon.type.toUpperCase()}
+                                 </Badge>
+                               </div>
+                             </div>
+                             <div className="text-right">
+                               <div className="text-2xl font-bold text-primary">
+                                 ${weapon.price}
+                               </div>
+                             </div>
+                           </div>
 
                           <div className="grid grid-cols-2 gap-3 text-sm">
                             <div>

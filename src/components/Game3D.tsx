@@ -391,14 +391,16 @@ const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill,
           health={playerHealth}
         />
 
-        {/* Player's Weapon in Hand */}
+        {/* Player's Weapon in Hand - Fixed positioning and made more visible */}
         {playerWeapon && playerWeapon.type !== 'grenade' && (
-          <Weapon3D
-            weaponType={playerWeapon.type}
-            position={[playerPosition[0] + 0.3, playerPosition[1] + 0.1, playerPosition[2] + 0.2]}
-            rotation={[0, Math.PI / 4, 0]}
-            scale={0.5}
-          />
+          <group position={playerPosition}>
+            <Weapon3D
+              weaponType={playerWeapon.type}
+              position={[0.4, 0.8, 0.3]}
+              rotation={[0, Math.PI / 6, Math.PI / 12]}
+              scale={0.8}
+            />
+          </group>
         )}
 
         {/* Bots - More spread out for better gameplay */}
