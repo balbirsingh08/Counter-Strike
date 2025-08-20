@@ -19,81 +19,139 @@ interface Bot3DProps {
   onHit: () => void;
 }
 
-// Enhanced Player Component - CS Style
+// Enhanced Player Component - CS2 Crasswater Style
 const Player3D = ({ position, color, name, health }: Player3DProps) => {
   const meshRef = useRef<Mesh>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
-      // Subtle idle animation
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.02;
+      // Subtle breathing animation
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 1.5) * 0.015;
     }
   });
 
   return (
     <group position={position}>
-      {/* Main Body - More realistic proportions */}
+      {/* Main Body - Counter-Terrorist uniform */}
       <mesh ref={meshRef} position={[0, 0.9, 0]} castShadow>
-        <boxGeometry args={[0.6, 1.2, 0.35]} />
-        <meshLambertMaterial color={color} />
+        <boxGeometry args={[0.65, 1.3, 0.4]} />
+        <meshPhongMaterial color="#2c3e50" />
       </mesh>
       
-      {/* Chest Armor/Vest */}
-      <mesh position={[0, 1.1, 0.18]} castShadow>
-        <boxGeometry args={[0.55, 0.8, 0.15]} />
-        <meshLambertMaterial color="#2a2a2a" />
+      {/* Tactical Vest - More detailed */}
+      <mesh position={[0, 1.15, 0.21]} castShadow>
+        <boxGeometry args={[0.6, 0.9, 0.18]} />
+        <meshPhongMaterial color="#34495e" />
       </mesh>
       
-      {/* Head - More detailed */}
+      {/* Chest Plate Details */}
+      <mesh position={[0, 1.3, 0.31]} castShadow>
+        <boxGeometry args={[0.3, 0.2, 0.05]} />
+        <meshPhongMaterial color="#2c3e50" />
+      </mesh>
+      
+      {/* Tactical Pouches */}
+      <mesh position={[-0.2, 0.9, 0.31]} castShadow>
+        <boxGeometry args={[0.12, 0.15, 0.08]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      <mesh position={[0.2, 0.9, 0.31]} castShadow>
+        <boxGeometry args={[0.12, 0.15, 0.08]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      
+      {/* Head - More realistic skin tone */}
       <mesh position={[0, 1.85, 0]} castShadow>
-        <boxGeometry args={[0.35, 0.4, 0.35]} />
-        <meshLambertMaterial color="#fdbcb4" />
+        <boxGeometry args={[0.38, 0.42, 0.38]} />
+        <meshPhongMaterial color="#deb887" />
       </mesh>
       
-      {/* Helmet */}
-      <mesh position={[0, 2.0, 0]} castShadow>
-        <boxGeometry args={[0.4, 0.25, 0.4]} />
-        <meshLambertMaterial color="#1a1a1a" />
+      {/* Tactical Helmet with details */}
+      <mesh position={[0, 2.02, 0]} castShadow>
+        <boxGeometry args={[0.45, 0.28, 0.45]} />
+        <meshPhongMaterial color="#2c3e50" />
       </mesh>
       
-      {/* Arms */}
-      <mesh position={[-0.4, 0.8, 0]} rotation={[0, 0, 0.2]} castShadow>
-        <boxGeometry args={[0.18, 0.9, 0.18]} />
-        <meshLambertMaterial color={color} />
-      </mesh>
-      <mesh position={[0.4, 0.8, 0]} rotation={[0, 0, -0.2]} castShadow>
-        <boxGeometry args={[0.18, 0.9, 0.18]} />
-        <meshLambertMaterial color={color} />
+      {/* Helmet Strap */}
+      <mesh position={[0, 1.85, 0]} castShadow>
+        <boxGeometry args={[0.48, 0.08, 0.48]} />
+        <meshPhongMaterial color="#1a252f" />
       </mesh>
       
-      {/* Hands */}
-      <mesh position={[-0.5, 0.3, 0]} castShadow>
-        <boxGeometry args={[0.12, 0.12, 0.12]} />
-        <meshLambertMaterial color="#fdbcb4" />
-      </mesh>
-      <mesh position={[0.5, 0.3, 0]} castShadow>
-        <boxGeometry args={[0.12, 0.12, 0.12]} />
-        <meshLambertMaterial color="#fdbcb4" />
+      {/* Tactical Goggles */}
+      <mesh position={[0, 1.88, 0.19]} castShadow>
+        <boxGeometry args={[0.32, 0.15, 0.08]} />
+        <meshPhongMaterial color="#000000" />
       </mesh>
       
-      {/* Legs */}
-      <mesh position={[-0.15, 0.1, 0]} castShadow>
-        <boxGeometry args={[0.2, 0.8, 0.2]} />
-        <meshLambertMaterial color="#333333" />
+      {/* Arms with tactical sleeves */}
+      <mesh position={[-0.42, 0.85, 0]} rotation={[0, 0, 0.15]} castShadow>
+        <boxGeometry args={[0.2, 0.95, 0.2]} />
+        <meshPhongMaterial color="#2c3e50" />
       </mesh>
-      <mesh position={[0.15, 0.1, 0]} castShadow>
-        <boxGeometry args={[0.2, 0.8, 0.2]} />
-        <meshLambertMaterial color="#333333" />
+      <mesh position={[0.42, 0.85, 0]} rotation={[0, 0, -0.15]} castShadow>
+        <boxGeometry args={[0.2, 0.95, 0.2]} />
+        <meshPhongMaterial color="#2c3e50" />
       </mesh>
       
-      {/* Boots */}
-      <mesh position={[-0.15, -0.35, 0.1]} castShadow>
-        <boxGeometry args={[0.25, 0.15, 0.4]} />
-        <meshLambertMaterial color="#1a1a1a" />
+      {/* Elbow Pads */}
+      <mesh position={[-0.42, 0.6, 0]} castShadow>
+        <boxGeometry args={[0.22, 0.15, 0.22]} />
+        <meshPhongMaterial color="#1a252f" />
       </mesh>
-      <mesh position={[0.15, -0.35, 0.1]} castShadow>
-        <boxGeometry args={[0.25, 0.15, 0.4]} />
-        <meshLambertMaterial color="#1a1a1a" />
+      <mesh position={[0.42, 0.6, 0]} castShadow>
+        <boxGeometry args={[0.22, 0.15, 0.22]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      
+      {/* Tactical Gloves */}
+      <mesh position={[-0.52, 0.28, 0]} castShadow>
+        <boxGeometry args={[0.14, 0.14, 0.14]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      <mesh position={[0.52, 0.28, 0]} castShadow>
+        <boxGeometry args={[0.14, 0.14, 0.14]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      
+      {/* Tactical Pants */}
+      <mesh position={[-0.16, 0.05, 0]} castShadow>
+        <boxGeometry args={[0.22, 0.85, 0.22]} />
+        <meshPhongMaterial color="#2c3e50" />
+      </mesh>
+      <mesh position={[0.16, 0.05, 0]} castShadow>
+        <boxGeometry args={[0.22, 0.85, 0.22]} />
+        <meshPhongMaterial color="#2c3e50" />
+      </mesh>
+      
+      {/* Knee Pads */}
+      <mesh position={[-0.16, -0.1, 0.12]} castShadow>
+        <boxGeometry args={[0.24, 0.18, 0.12]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      <mesh position={[0.16, -0.1, 0.12]} castShadow>
+        <boxGeometry args={[0.24, 0.18, 0.12]} />
+        <meshPhongMaterial color="#1a252f" />
+      </mesh>
+      
+      {/* Combat Boots - More detailed */}
+      <mesh position={[-0.16, -0.38, 0.12]} castShadow>
+        <boxGeometry args={[0.28, 0.18, 0.45]} />
+        <meshPhongMaterial color="#1a1a1a" />
+      </mesh>
+      <mesh position={[0.16, -0.38, 0.12]} castShadow>
+        <boxGeometry args={[0.28, 0.18, 0.45]} />
+        <meshPhongMaterial color="#1a1a1a" />
+      </mesh>
+      
+      {/* Boot Laces */}
+      <mesh position={[-0.16, -0.32, 0.24]} castShadow>
+        <boxGeometry args={[0.08, 0.15, 0.02]} />
+        <meshPhongMaterial color="#444444" />
+      </mesh>
+      <mesh position={[0.16, -0.32, 0.24]} castShadow>
+        <boxGeometry args={[0.08, 0.15, 0.02]} />
+        <meshPhongMaterial color="#444444" />
       </mesh>
 
       {/* Player Name with better styling */}
@@ -139,10 +197,35 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
 
     const time = state.clock.elapsedTime;
     
-    // Enhanced AI movement - more realistic patrol
+    // Enhanced AI movement with wall collision detection
     if (isMoving && health > 0) {
-      const newX = position[0] + Math.sin(time * 0.4) * 2.5;
-      const newZ = position[2] + Math.cos(time * 0.3) * 2;
+      let newX = position[0] + Math.sin(time * 0.4) * 2.5;
+      let newZ = position[2] + Math.cos(time * 0.3) * 2;
+      
+      // Wall collision detection - keep bots inside boundaries
+      const mapBoundary = 13; // Slightly inside the wall boundaries
+      newX = Math.max(-mapBoundary, Math.min(mapBoundary, newX));
+      newZ = Math.max(-mapBoundary, Math.min(mapBoundary, newZ));
+      
+      // Avoid cover objects collision
+      const coverPositions = [
+        { x: 5, z: 5, size: 1.5 },
+        { x: -5, z: -5, size: 1.5 },
+        { x: 0, z: -8, size: 2.5 },
+        { x: 8, z: -3, size: 1.5 },
+        { x: -8, z: 3, size: 1.5 }
+      ];
+      
+      for (const cover of coverPositions) {
+        const distX = Math.abs(newX - cover.x);
+        const distZ = Math.abs(newZ - cover.z);
+        if (distX < cover.size && distZ < cover.size) {
+          // Push bot away from cover
+          newX += (newX > cover.x ? 1 : -1) * 0.5;
+          newZ += (newZ > cover.z ? 1 : -1) * 0.5;
+        }
+      }
+      
       setBotPos([newX, position[1], newZ]);
       meshRef.current.position.set(newX, position[1], newZ);
       
@@ -194,113 +277,149 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
   return (
     <group position={botPos}>
       <mesh ref={meshRef} position={[0, 0, 0]}>
-        {/* Main Body - Terrorist outfit */}
+        {/* Main Body - Terrorist outfit with more detail */}
         <mesh ref={bodyRef} position={[0, 0.9, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.6, 1.2, 0.35]} />
-          <meshLambertMaterial 
-            color={isDead ? deadColor : hitColor} 
+          <boxGeometry args={[0.65, 1.3, 0.4]} />
+          <meshPhongMaterial 
+            color={isDead ? deadColor : "#654321"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Tactical Vest */}
-        <mesh position={[0, 1.1, 0.18]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.55, 0.8, 0.15]} />
-          <meshLambertMaterial 
-            color={isDead ? "#222222" : "#1a1a1a"} 
+        {/* Terrorist Vest - Worn and weathered */}
+        <mesh position={[0, 1.15, 0.21]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.6, 0.9, 0.18]} />
+          <meshPhongMaterial 
+            color={isDead ? "#111111" : "#2d1b0e"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Head - More detailed */}
+        {/* Ammo Pouches */}
+        <mesh position={[-0.22, 1.0, 0.31]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.15, 0.2, 0.1]} />
+          <meshPhongMaterial 
+            color={isDead ? "#0a0a0a" : "#1a1a1a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.22, 1.0, 0.31]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.15, 0.2, 0.1]} />
+          <meshPhongMaterial 
+            color={isDead ? "#0a0a0a" : "#1a1a1a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Head - Darker skin tone */}
         <mesh position={[0, 1.85, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.35, 0.4, 0.35]} />
-          <meshLambertMaterial 
-            color={isDead ? "#888888" : "#fdbcb4"} 
+          <boxGeometry args={[0.38, 0.42, 0.38]} />
+          <meshPhongMaterial 
+            color={isDead ? "#444444" : "#8B6914"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Terrorist Mask/Balaclava */}
-        <mesh position={[0, 1.9, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.38, 0.35, 0.38]} />
-          <meshLambertMaterial 
-            color={isDead ? "#111111" : "#000000"} 
+        {/* Terrorist Balaclava/Mask - More detailed */}
+        <mesh position={[0, 1.92, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.42, 0.38, 0.42]} />
+          <meshPhongMaterial 
+            color={isDead ? "#050505" : "#000000"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Arms with better positioning */}
-        <mesh position={[-0.4, 0.8, 0]} rotation={[0, 0, 0.3]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.18, 0.9, 0.18]} />
-          <meshLambertMaterial 
-            color={isDead ? deadColor : hitColor} 
+        {/* Eye holes in mask */}
+        <mesh position={[-0.08, 1.88, 0.21]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.06, 0.06, 0.02]} />
+          <meshPhongMaterial 
+            color={isDead ? "#222222" : "#8B6914"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
-        <mesh position={[0.4, 0.8, 0]} rotation={[0, 0, -0.3]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.18, 0.9, 0.18]} />
-          <meshLambertMaterial 
-            color={isDead ? deadColor : hitColor} 
-            transparent={isDead}
-            opacity={isDead ? 0.5 : 1}
-          />
-        </mesh>
-        
-        {/* Hands */}
-        <mesh position={[-0.5, 0.25, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.12, 0.12, 0.12]} />
-          <meshLambertMaterial 
-            color={isDead ? "#666666" : "#8B4513"} 
-            transparent={isDead}
-            opacity={isDead ? 0.5 : 1}
-          />
-        </mesh>
-        <mesh position={[0.5, 0.25, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.12, 0.12, 0.12]} />
-          <meshLambertMaterial 
-            color={isDead ? "#666666" : "#8B4513"} 
+        <mesh position={[0.08, 1.88, 0.21]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.06, 0.06, 0.02]} />
+          <meshPhongMaterial 
+            color={isDead ? "#222222" : "#8B6914"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Legs - Tactical pants */}
-        <mesh position={[-0.15, 0.1, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.2, 0.8, 0.2]} />
-          <meshLambertMaterial 
-            color={isDead ? "#222222" : "#2a2a2a"} 
+        {/* Arms - Military style */}
+        <mesh position={[-0.42, 0.85, 0]} rotation={[0, 0, 0.2]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.2, 0.95, 0.2]} />
+          <meshPhongMaterial 
+            color={isDead ? deadColor : "#654321"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
-        <mesh position={[0.15, 0.1, 0]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.2, 0.8, 0.2]} />
-          <meshLambertMaterial 
-            color={isDead ? "#222222" : "#2a2a2a"} 
+        <mesh position={[0.42, 0.85, 0]} rotation={[0, 0, -0.2]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.2, 0.95, 0.2]} />
+          <meshPhongMaterial 
+            color={isDead ? deadColor : "#654321"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
         
-        {/* Combat Boots */}
-        <mesh position={[-0.15, -0.35, 0.1]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.25, 0.15, 0.4]} />
-          <meshLambertMaterial 
-            color={isDead ? "#111111" : "#1a1a1a"} 
+        {/* Tactical Gloves */}
+        <mesh position={[-0.52, 0.28, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.14, 0.14, 0.14]} />
+          <meshPhongMaterial 
+            color={isDead ? "#333333" : "#2d1b0e"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
         </mesh>
-        <mesh position={[0.15, -0.35, 0.1]} onClick={handleClick} castShadow>
-          <boxGeometry args={[0.25, 0.15, 0.4]} />
-          <meshLambertMaterial 
-            color={isDead ? "#111111" : "#1a1a1a"} 
+        <mesh position={[0.52, 0.28, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.14, 0.14, 0.14]} />
+          <meshPhongMaterial 
+            color={isDead ? "#333333" : "#2d1b0e"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Military Cargo Pants */}
+        <mesh position={[-0.16, 0.05, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.22, 0.85, 0.22]} />
+          <meshPhongMaterial 
+            color={isDead ? "#1a1a1a" : "#4a4a2a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.16, 0.05, 0]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.22, 0.85, 0.22]} />
+          <meshPhongMaterial 
+            color={isDead ? "#1a1a1a" : "#4a4a2a"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        
+        {/* Combat Boots - More detailed */}
+        <mesh position={[-0.16, -0.38, 0.12]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.28, 0.18, 0.45]} />
+          <meshPhongMaterial 
+            color={isDead ? "#0a0a0a" : "#2d1b0e"} 
+            transparent={isDead}
+            opacity={isDead ? 0.5 : 1}
+          />
+        </mesh>
+        <mesh position={[0.16, -0.38, 0.12]} onClick={handleClick} castShadow>
+          <boxGeometry args={[0.28, 0.18, 0.45]} />
+          <meshPhongMaterial 
+            color={isDead ? "#0a0a0a" : "#2d1b0e"} 
             transparent={isDead}
             opacity={isDead ? 0.5 : 1}
           />
