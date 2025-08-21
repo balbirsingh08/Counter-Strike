@@ -886,18 +886,95 @@ interface Game3DProps {
 }
 
 const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill, onGameExit }: Game3DProps) => {
-  const [playerPosition] = useState<[number, number, number]>([0, 0, -8]);
+  const [playerPosition, setPlayerPosition] = useState<[number, number, number]>([0, 0, -8]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [keys, setKeys] = useState<{ [key: string]: boolean }>({});
   const [kills, setKills] = useState(0);
   const [gameWon, setGameWon] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalBots = 5;
+
+  // Mouse movement with pointer lock
+  const handleMouseMove = (event: MouseEvent) => {
+    if (document.pointerLockElement) {
+      const sensitivity = 0.002;
+      setMousePosition(prev => ({
+        x: prev.x + event.movementX * sensitivity,
+        y: Math.max(-Math.PI/2, Math.min(Math.PI/2, prev.y - event.movementY * sensitivity))
+      }));
+    }
+  };
+
+  // Click to enable pointer lock
+  const handleCanvasClick = () => {
+    if (canvasRef.current && !document.pointerLockElement) {
+      canvasRef.current.requestPointerLock();
+    }
+  };
+
+  // Keyboard handlers
+  const handleKeyDown = (event: KeyboardEvent) => {
+    setKeys(prev => ({ ...prev, [event.code]: true }));
+  };
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    setKeys(prev => ({ ...prev, [event.code]: false }));
+  };
+
+  // Setup event listeners
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('click', handleCanvasClick);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
+      
+      return () => {
+        canvas.removeEventListener('click', handleCanvasClick);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
+      };
+    }
+  }, []);
+
+  // Player movement with WASD using standard setInterval
+  useEffect(() => {
+    const moveInterval = setInterval(() => {
+      const speed = 0.1;
+      let newX = playerPosition[0];
+      let newZ = playerPosition[2];
+
+      // WASD movement
+      if (keys['KeyW']) newZ -= speed;
+      if (keys['KeyS']) newZ += speed;
+      if (keys['KeyA']) newX -= speed;
+      if (keys['KeyD']) newX += speed;
+
+      // Boundary checking
+      const boundary = 12;
+      newX = Math.max(-boundary, Math.min(boundary, newX));
+      newZ = Math.max(-boundary, Math.min(boundary, newZ));
+
+      // Only update if position changed
+      if (newX !== playerPosition[0] || newZ !== playerPosition[2]) {
+        setPlayerPosition([newX, 0, newZ]);
+      }
+    }, 16); // ~60fps
+
+    return () => clearInterval(moveInterval);
+  }, [keys, playerPosition]);
 
   const handleBotHit = () => {
     const newKills = kills + 1;
     setKills(newKills);
     onBotKill();
+    console.log('Bot hit! Total kills:', newKills);
     
     if (newKills >= totalBots) {
       setGameWon(true);
+      console.log('All bots eliminated! Game won!');
     }
   };
 
@@ -929,6 +1006,7 @@ const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill,
       </div>
 
       <Canvas
+        ref={canvasRef}
         camera={{ position: playerPosition, fov: 75 }}
         gl={{ antialias: true }}
         shadows
