@@ -782,12 +782,13 @@ const Bot3D = ({ position, playerPosition, onHit }: Bot3DProps) => {
 
 // Map/Environment - Enhanced
 const GameMap = () => {
+  console.log('GameMap component rendering');
   return (
     <>
-      {/* Ground with texture pattern */}
+      {/* Visible Ground with bright color for testing */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[30, 30]} />
-        <meshPhongMaterial color="#2a2a2a" />
+        <planeGeometry args={[20, 20]} />
+        <meshLambertMaterial color="#4a4a4a" />
       </mesh>
       
       {/* Grid pattern on ground */}
@@ -931,10 +932,14 @@ const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill,
       </div>
 
       <Canvas
-        camera={{ position: [0, 8, 15], fov: 75 }}
+        camera={{ position: [0, 5, 10], fov: 75, near: 0.1, far: 1000 }}
         gl={{ antialias: true }}
         shadows
-        style={{ width: '100%', height: '100vh' }}
+        style={{ width: '100%', height: '100vh', backgroundColor: '#87ceeb' }}
+        onCreated={(state) => {
+          console.log('Canvas created successfully');
+          console.log('Camera position:', state.camera.position);
+        }}
       >
         {/* Enhanced Lighting */}
         <ambientLight intensity={0.3} />
@@ -982,51 +987,41 @@ const Game3D = ({ playerName, playerTeam, playerHealth, playerWeapon, onBotKill,
           </group>
         )}
 
-        {/* Bots - More spread out for better gameplay */}
+        {/* Bots - Positioned closer and more visible */}
         <Bot3D
-          position={[7, 0, 8]}
+          position={[3, 0, 3]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[-6, 0, 5]}
+          position={[-3, 0, -3]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[3, 0, -7]}
+          position={[0, 0, -5]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[-8, 0, -4]}
+          position={[5, 0, 0]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
         <Bot3D
-          position={[0, 0, 10]}
+          position={[-5, 0, 2]}
           playerPosition={playerPosition}
           onHit={handleBotHit}
         />
 
-        {/* Enhanced Controls - Right-click drag to look around */}
+        {/* Simple OrbitControls for debugging */}
         <OrbitControls
-          enablePan={false}
-          enableZoom={true}
+          enablePan={true}
+          enableZoom={true} 
           enableRotate={true}
-          mouseButtons={{
-            LEFT: undefined,    // Disable left click rotation
-            MIDDLE: 1,         // Middle for zoom
-            RIGHT: 0           // Right click for rotation
-          }}
-          minDistance={5}
-          maxDistance={25}
-          minPolarAngle={0.1}
-          maxPolarAngle={Math.PI / 2}
-          rotateSpeed={0.8}
-          zoomSpeed={0.8}
-          dampingFactor={0.1}
-          enableDamping={true}
+          minDistance={3}
+          maxDistance={20}
+          target={[0, 0, 0]}
         />
       </Canvas>
 
